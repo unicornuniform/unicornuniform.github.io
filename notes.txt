@@ -1,3 +1,4 @@
 const iframe = document.createElement("iframe");
+iframe.setAttribute("allow", "autoplay; camera; microphone");
 iframe.src = "https://unicornuniform.github.io";
 document.body.appendChild(iframe);
