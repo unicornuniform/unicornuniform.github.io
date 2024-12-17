@@ -72,11 +72,12 @@ script.onload = function () {
         document.getElementById('startButton').addEventListener('click', () => {
           codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
             if (result) {
-              console.log(result);
-              document.getElementById('result').textContent = "Found:" + result.text
+              //console.log(result);
+              alert(result.text);
+              document.getElementById('result').textContent = result.text;
             }
             if (err && !(err instanceof ZXing.NotFoundException)) {
-              console.error(err)
+              //console.error(err)
               document.getElementById('result').textContent = err
             }
           })
