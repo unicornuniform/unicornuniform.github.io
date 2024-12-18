@@ -168,7 +168,7 @@ script.onload = function () {
           codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
             if (result) {
               console.log("Found a result...");
-              document.getElementById('result').innerHTML + document.getElementById('result').innerHTML + "<br>";
+              document.getElementById('result').innerHTML + document.getElementById('result').innerHTML + "<br>Found a result: ";
               var stockCodes = findStockCodesFromBarcode(result.text);
               for(var x = 0; x < stockCodes.length; x++) {
                   fetchLocations(stockCodes[x])
