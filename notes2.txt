@@ -167,12 +167,17 @@ script.onload = function () {
         document.getElementById('startButton').addEventListener('click', () => {
           codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
             if (result) {
-              console.log(result)
-              document.getElementById('result').textContent = result.text
+              console.log("Found a result...");
+              document.getElementById('result').innerHTML + document.getElementById('result').innerHTML + "<br>";
+              var stockCodes = findStockCodesFromBarcode(result.text);
+              for(var x = 0; x < stockCodes.length; x++) {
+                  fetchLocations(stockCodes[x])
+              }
+              //document.getElementById('result').textContent = result.text;
             }
             if (err && !(err instanceof ZXing.NotFoundException)) {
               console.error(err)
-              document.getElementById('result').textContent = err
+              document.getElementById('result').textContent = document.getElementById('result').textContent + err;
             }
           })
           console.log("Started continous decode from camera with id " + selectedDeviceId)
