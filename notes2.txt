@@ -3,7 +3,7 @@ var html = `  <main class="wrapper" style="padding-top:2em">
       <h1 class="title">Scan 1D/2D Code from Video Camera</h1>
 
       <p>
-        <a class="button-small button-outline" href="../../index.html">HOME</a>
+        <a class="button-small button-outline" href="../../index.html">HOME 🏡</a>
       </p>
 
       <p>This example shows how to scan any supported 1D/2D code with ZXing javascript library from the device video
@@ -43,6 +43,101 @@ var html = `  <main class="wrapper" style="padding-top:2em">
   </main>`;
 document.body.innerHTML = html + document.body.innerHTML;
 
+
+let barcodes = [];
+var barcode = {article: 586794, barcodes: []};
+barcode.barcodes = [
+    {
+        "isis_ref_no": "586794",
+        "ean_tun": "9310015243882",
+        "ean_tun_uom": "EA",
+        "isis_article_desc": "Burger Rings 220g",
+        "pack_break_uom": "EA",
+    },
+    {
+        "isis_ref_no": "586794",
+        "ean_tun": "19310015243889",
+        "ean_tun_uom": "CAR",
+        "isis_article_desc": "Burger Rings 220g",
+        "pack_break_uom": "CAR",
+    },
+    {
+        "isis_ref_no": "586794",
+        "ean_tun": "29310015243886",
+        "ean_tun_uom": "CA1",
+        "isis_article_desc": "Burger Rings 220g",
+        "pack_break_uom": "CA1",
+    }
+];
+barcodes.push(barcode);
+
+function findStockCodesFromBarcode(needle) {
+    var arr_stockCodes = [];
+    var check = false;
+
+    var id = 0;
+    for(var x = 0; x < barcodes.length; x++) {
+        for(var i = 0; i < barcodes[x].barcodes.length; i++) {
+            if(barcodes[x].barcodes[i].ean_tun == needle) {
+                check = true;
+                id = x;
+                break;
+            }
+        }
+    }
+
+    if(check == true) {
+        for(var i = 0; i < barcodes[id].barcodes.length; i++) {
+            if(arr_stockCodes.includes(barcodes[id].barcodes[i].isis_ref_no) == false) {
+                arr_stockCodes.push(barcodes[id].barcodes[i].isis_ref_no)
+            }
+        }
+    }
+
+    return arr_stockCodes;
+}
+
+function fetchLocations(stockCode) {
+fetch("https://wowfbwr.gss.woolworths.com.au/api/sequence/GetProductMultipleLocations?storeId=1393&stockCode=" + stockCode + "&locationType=&x=0.8572404695526443", {
+  "headers": {
+    "accept": "application/json, text/javascript, */*; q=0.01",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/json",
+    "priority": "u=0, i",
+    "request-context": "appId=cid-v1:2204ccea-0e7e-433b-99b9-8cdf19b682d4",
+    "request-id": "|uEfKX.oF3cO",
+    "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-dtpc": "1$423341753_308h22vNSKSMWLWHMLKPUFQFKAMRCCKKFMHUOEB-0e0",
+    "x-dtreferer": "https://wowfbwr.gss.woolworths.com.au/wowpick/shell",
+    "x-requested-with": "XMLHttpRequest"
+  },
+  "referrer": "https://wowfbwr.gss.woolworths.com.au/Sequence.htm",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}).then((response) => {
+      return response.json();
+}).then((data) => {
+    console.log( data.Data );
+    var shelves = [];
+    for(var x = 0; x < data.Data.length; x++) {
+	shelves.push("A" + data.Data[x].Aisle + " B" + data.Data[x].Bay + " S" + data.Data[x].Shelf + " (" + data.Data[x].LocationType + ")");
+    }
+    document.getElementById('result').innerHTML = document.getElementById('result').innerHTML + stockCode + "<br>";
+    for(var x = 0; x < shelves.length; x++){
+        document.getElementById('result').innerHTML = document.getElementById('result').innerHTML + "--" + shelves[x] + "<br>";
+    }
+    console.log(shelves);
+});
+}
+
 var script = document.createElement('script');
 script.onload = function () {
     console.log("ZXing Loaded!");
@@ -72,12 +167,11 @@ script.onload = function () {
         document.getElementById('startButton').addEventListener('click', () => {
           codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
             if (result) {
-              //console.log(result);
-              alert(result.text);
-              document.getElementById('result').textContent = result.text;
+              console.log(result)
+              document.getElementById('result').textContent = result.text
             }
             if (err && !(err instanceof ZXing.NotFoundException)) {
-              //console.error(err)
+              console.error(err)
               document.getElementById('result').textContent = err
             }
           })
@@ -98,3 +192,11 @@ script.onload = function () {
 script.src = "https://unpkg.com/@zxing/library@latest/umd/index.min.js";
 
 document.head.appendChild(script);
+
+
+
+
+
+var js = `  <script type="text/javascript">
+</script>`;
+document.body.innerHTML = js + document.body.innerHTML;
